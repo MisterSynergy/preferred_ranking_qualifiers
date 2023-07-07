@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: msynbot.preferred-ranking-qualifiers
+  labels:
+    name: msynbot.preferred-ranking-qualifiers
+    # The toolforge=tool label will cause $HOME and other paths to be mounted from Toolforge
+    toolforge: tool
+spec:
+  schedule: "42 8 * * *"
+  successfulJobsHistoryLimit: 0
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            toolforge: tool
+        spec:
+          containers:
+          - name: preferred-ranking-qualifiers
+            image: docker-registry.tools.wmflabs.org/toolforge-python39-sssd-base:latest
+            workingDir: /data/project/msynbot/pywikibot_tasks/preferred_ranking_qualifiers
+            command: [ venv/bin/python3 ]
+            args: [ main.py ]
+            env:
+            - name: HOME
+              value: /data/project/msynbot
+            - name: PYTHONPATH
+              value: /data/project/shared/pywikibot/stable
+          restartPolicy: Never
