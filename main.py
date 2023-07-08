@@ -91,7 +91,9 @@ def make_report(df:pd.DataFrame) -> str:
 |-
 ! item !! property !! rank !! reason
 """
-    
+
+    df = df.sort_values(by='item', key=lambda x : x.str.slice(1).astype(int), ascending=True)
+
     for elem in df.itertuples():
         if not elem.reason.startswith('http://www.wikidata.org/.well-known/genid/'):
             reason_link = f'[[{elem.reason}|{elem.reasonLabel}]]'
